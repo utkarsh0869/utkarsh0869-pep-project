@@ -40,7 +40,18 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public void addAccount(Account account) {
-        throw new UnsupportedOperationException("Unimplemented method 'addAccount'");
+        try {
+            Connection conn = ConnectionUtil.getConnection();
+            String sql = "INSERT INTO message VALUES(?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, account.getAccount_id());
+            ps.setString(2, account.getUsername());
+            ps.setString(3, account.getPassword());
+            ps.executeUpdate();
+            System.out.print("Account added successfully");
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

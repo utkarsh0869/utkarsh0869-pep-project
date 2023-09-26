@@ -24,9 +24,9 @@ public class AccountDAOImpl implements AccountDAO {
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
+                int id = rs.getInt("account_id");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
 
                 Account account = new Account(id, username, password);
                 accounts.add(account);
@@ -48,7 +48,7 @@ public class AccountDAOImpl implements AccountDAO {
             ps.setString(2, account.getUsername());
             ps.setString(3, account.getPassword());
             ps.executeUpdate();
-            System.out.print("Account added successfully");
+            System.out.println("Account added successfully");
         } catch(SQLException e) {
             e.printStackTrace();
         }

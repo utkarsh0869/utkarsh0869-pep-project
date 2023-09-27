@@ -162,11 +162,43 @@ public class MessageDAO {
             ps.setInt(2, existingMessage.getMessage_id());
 
             int rowsUpdated = ps.executeUpdate();
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error updating message: " + e.getMessage());
         }
+    }
+    
+    public List<Message> getMessagesByAccountId(int accountId) {
+        
+        Connection conn = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, accountId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int messageId = rs.getInt("message_id");
+                String messageText = rs.getString("message_text");
+                long timePostedEpoch = rs.getLong("time_posted_epoch");
+
+                // You may need to retrieve posted_by as well, depending on your database schema
+                // int postedBy = rs.getInt("posted_by");
+
+                // Create a Message object
+                Message message = new Message(messageId, accountId, messageText, timePostedEpoch);
+                messages.add(message);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieving messages by account ID: " + e.getMessage());
+        }
+        return messages;
     }
 
 }

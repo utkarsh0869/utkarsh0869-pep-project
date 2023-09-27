@@ -55,4 +55,8 @@ public class MessageService {
         messageDAO.updateMessage(existingMessage);
     }
 
+    public List<Message> getMessagesByAccountId(int accountId) {
+        return messageDAO.getMessagesByAccountId(accountId);
+    }
+
 }

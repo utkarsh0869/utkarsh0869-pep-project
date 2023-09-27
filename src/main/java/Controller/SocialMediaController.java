@@ -36,6 +36,7 @@ public class SocialMediaController {
         app.get("messages/{message_id}", this::getMessageByIdHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("messages/{message_id}", this::patchMessageHandler);
+        app.get("accounts/{account_id}/messages", this::getMessagesByAccountHandler);
         return app;
     }
 
@@ -175,5 +176,23 @@ public class SocialMediaController {
 
     private boolean isValidMessageText(String messageText) {
         return messageText != null && !messageText.trim().isEmpty() && messageText.length() < 255;
+    }
+
+    /*
+     * Handler to retrieve messages from a particular user id.
+     */
+    private void getMessagesByAccountHandler(Context ctx) throws JsonProcessingException {
+        // Extract the account_id from the path parameter
+        int accountId = ctx.pathParamAsClass("account_id", Integer.class).get();
+    
+        // Retrieve the list of messages posted by the specified user
+        List<Message> messages = messageService.getMessagesByAccountId(accountId);
+    
+        // Serialize the list of messages to JSON
+        ObjectMapper mapper = new ObjectMapper();
+        String responseJson = mapper.writeValueAsString(messages);
+    
+        // Set the response status and body
+        ctx.status(200).json(responseJson);
     }
 }

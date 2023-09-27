@@ -35,7 +35,7 @@ public class SocialMediaController {
         app.get("messages", this::getMessagesHandler);
         app.get("messages/{message_id}", this::getMessageByIdHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
-
+        app.patch("messages/{message_id}", this::patchMessageHandler);
         return app;
     }
 
@@ -143,4 +143,37 @@ public class SocialMediaController {
         }
     }
     
+    /*
+     * Handler to patch messages.
+     */
+    private void patchMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message updatedMessage = mapper.readValue(ctx.body(), Message.class);
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+
+        // Check if the message with the given message_id exists
+        Message existingMessage = messageService.getMessageById(messageId);
+
+        if (existingMessage != null) {
+            // Validate the new message_text
+            if (isValidMessageText(updatedMessage.getMessage_text())) {
+                // Update the message in the database
+                existingMessage.setMessage_text(updatedMessage.getMessage_text());
+                messageService.updateMessage(existingMessage);
+
+                // Return the updated message in the response body
+                ctx.json(mapper.writeValueAsString(existingMessage));
+            } else {
+                // Invalid message_text, return 400 status
+                ctx.status(400);
+            }
+        } else {
+            // Message with the given message_id does not exist, return 400 status
+            ctx.status(400);
+        }
+    }
+
+    private boolean isValidMessageText(String messageText) {
+        return messageText != null && !messageText.trim().isEmpty() && messageText.length() < 255;
+    }
 }

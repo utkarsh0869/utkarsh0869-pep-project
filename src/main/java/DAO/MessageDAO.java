@@ -149,6 +149,24 @@ public class MessageDAO {
             throw new RuntimeException("Error deleting message: " + e.getMessage());
         }
     }
-    
+
+    public void updateMessage(Message existingMessage) {
+
+        Connection conn = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, existingMessage.getMessage_text());
+            ps.setInt(2, existingMessage.getMessage_id());
+
+            int rowsUpdated = ps.executeUpdate();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error updating message: " + e.getMessage());
+        }
+    }
 
 }

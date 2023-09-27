@@ -51,4 +51,8 @@ public class MessageService {
         return deletedMessage;
     }
 
+    public void updateMessage(Message existingMessage) {
+        messageDAO.updateMessage(existingMessage);
+    }
+
 }

@@ -40,4 +40,8 @@ public class MessageService {
         }
     }
 
+    public Message getMessageById(int messageId) {
+        return messageDAO.getMessageById(messageId);
+    }
+
 }

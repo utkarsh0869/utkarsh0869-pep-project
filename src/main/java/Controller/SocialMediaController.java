@@ -33,6 +33,7 @@ public class SocialMediaController {
         app.post("login", this::postLoginHandler);
         app.post("messages", this::postMessagesHandler);
         app.get("messages", this::getMessagesHandler);
+        app.get("messages/{message_id}", this::getMessageByIdHandler);
 
         return app;
     }
@@ -89,7 +90,7 @@ public class SocialMediaController {
     }
 
     /*
-     * Hnadler to get all the messages/posts.
+     * Handler to get all the messages/posts.
      */
     private void getMessagesHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -99,4 +100,26 @@ public class SocialMediaController {
         ctx.status(200);
     }
 
+    /*
+     * Handler to get messages/post by user id.
+     */
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+    
+        // Get the message_id from the URL path parameter.
+        int messageId = ctx.pathParamAsClass("message_id", Integer.class).get();
+        
+        // Retrieve the message by its ID.
+        Message message = messageService.getMessageById(messageId);
+
+        ctx.status(200);
+    
+    if (message != null) {
+        // Convert the message to JSON and send it in the response body.
+        ctx.json(mapper.writeValueAsString(message));
+    } else {
+        // If no message is found, send an empty response body.
+        ctx.result("");
+    }
+    }
 }

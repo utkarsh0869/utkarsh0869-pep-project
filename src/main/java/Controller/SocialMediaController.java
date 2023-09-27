@@ -17,7 +17,7 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
 
-    MessageService messageService;
+    MessageService messageService = new MessageService();
     AccountService accountService = new AccountService();
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -29,7 +29,7 @@ public class SocialMediaController {
         app.get("/", ctx -> ctx.result("Hello Javalin") );
         app.post("register", this::postRegisterHandler);
         app.post("login", this::postLoginHandler);
-        app.post("/messages", this::postMessagesHandler);
+        app.post("messages", this::postMessagesHandler);
 
         return app;
     }
@@ -70,16 +70,16 @@ public class SocialMediaController {
     }
 
     /*
-     * Handler to post a new message.
+     * Handler to submit a new message/post.
      */
     private void postMessagesHandler(Context ctx) throws JsonProcessingException {
-
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
 
         if(addedMessage != null) {
             ctx.json(mapper.writeValueAsString(addedMessage));
+            ctx.status(200);
         } else {
             ctx.status(400);
         }

@@ -22,20 +22,22 @@ public class MessageService {
     }
 
     public Message addMessage(Message message) {
-        if(message.getMessage_text() != null && !message.getMessage_text().trim().isEmpty() && 
-            message.getMessage_text().length() <= 255) {
+        if(!message.getMessage_text().isBlank() && !message.getMessage_text().trim().isEmpty() && 
+            message.getMessage_text().length() < 255) {
 
                 if(messageDAO.checkIfUserExistsBy_PostedBy(message.getPosted_by())) {
                     int messageId = messageDAO.createMessage(message);
 
                     message.setMessage_id(messageId);
+
                     return message;
                 } else {
-                    throw new IllegalArgumentException("Posted_by user does not exists.");
+                    return null;
                 }
 
         } else {
-            throw new IllegalArgumentException("Invalid Message text.");
+            return null;
+            // throw new IllegalArgumentException("Invalid Message text.");
         }
     }
 

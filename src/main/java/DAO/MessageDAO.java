@@ -38,7 +38,7 @@ public class MessageDAO {
         Connection conn = ConnectionUtil.getConnection();
 
         try {
-            String sql = "SELECT COUNT(*) FROM account WHERE aacount_id = ?";
+            String sql = "SELECT COUNT(*) FROM account WHERE account_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, posted_by);
 

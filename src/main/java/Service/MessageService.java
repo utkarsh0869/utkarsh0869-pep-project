@@ -37,7 +37,6 @@ public class MessageService {
 
         } else {
             return null;
-            // throw new IllegalArgumentException("Invalid Message text.");
         }
     }
 

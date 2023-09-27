@@ -41,27 +41,78 @@ public class AccountDAO {
         return accounts;
     }
 
+    public boolean checkIfAccountAlreadyExists(String username) {
+
+        Connection conn = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT COUNT(*) FROM account where username = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, username);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                int count  = rs.getInt(1);
+                return count > 0; // If count is greater than 0, the account already exists.
+            }
+
+            return false; // Account does not exists. 
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking account existence: " + e.getMessage());
+        }
+    }
+
+    public int generateUniqueAccountId() {
+
+        Connection conn = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT MAX(account_id) FROM account";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                int maxAccountId = rs.getInt(1);
+                // Increment the highest account_id to generate a new unique account_id
+                return maxAccountId + 1;
+            }
+
+            // If there are no existing accounts, start with account_id 1
+            return 1;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error generating unique account ID: " + e.getMessage());
+        }
+    }
     /*
      * Add an account to the database.
      */
-    public void addAccount(Account account) {
+    public void createAccount(Account account) {
+
+        Connection conn = ConnectionUtil.getConnection();
+
         try {
-            Connection conn = ConnectionUtil.getConnection();
-            String sql = "INSERT INTO message VALUES(?,?,?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, account.getAccount_id());
-            ps.setString(2, account.getUsername());
-            ps.setString(3, account.getPassword());
-            ps.executeUpdate();
-            System.out.println("Account added successfully");
-        } catch(SQLException e) {
+            String sql = "INSERT INTO account (username, password) VALUES (?, ?)";
+
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            System.out.println("Here");
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating account failed, no rows affected.");
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error creating account: " + e.getMessage());
         }
     }
-    void deleteAccount(Account account) {
 
-    }
-    void updateAccount(Account account) {
-
-    }
 }

@@ -3,7 +3,9 @@ package Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import Model.Account;
 import Model.Message;
+import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -16,6 +18,7 @@ import io.javalin.http.Context;
 public class SocialMediaController {
 
     MessageService messageService;
+    AccountService accountService = new AccountService();
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -23,11 +26,29 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("/", ctx -> ctx.result("Hello Javlin") );
+        app.get("/", ctx -> ctx.result("Hello Javalin") );
+        // app.post("register", ctx -> accountService.getAllAccounts(ctx));
+        app.post("register", this::postRegisterHandler);
         app.post("/messages", this::postMessagesHandler);
-        // app.get("example-endpoint", this::exampleHandler);
 
         return app;
+    }
+
+    /*
+     * Handler to register a new user.
+     */
+    private void postRegisterHandler(Context ctx) throws JsonProcessingException {
+        System.out.println("here postregister");
+        ObjectMapper mapper = new ObjectMapper();
+        Account newAccount = mapper.readValue(ctx.body(), Account.class);
+        Account addedNewAccount = accountService.registerAccount(newAccount);
+
+        if(addedNewAccount != null) {
+            ctx.json(mapper.writeValueAsString(addedNewAccount));
+            ctx.status(200);
+        } else {
+            ctx.status(400);
+        }
     }
 
     /*
@@ -45,14 +66,5 @@ public class SocialMediaController {
             ctx.status(400);
         }
     }
-
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
-    }
-
 
 }

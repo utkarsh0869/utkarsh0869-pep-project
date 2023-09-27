@@ -34,6 +34,7 @@ public class SocialMediaController {
         app.post("messages", this::postMessagesHandler);
         app.get("messages", this::getMessagesHandler);
         app.get("messages/{message_id}", this::getMessageByIdHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
 
         return app;
     }
@@ -114,12 +115,32 @@ public class SocialMediaController {
 
         ctx.status(200);
     
-    if (message != null) {
-        // Convert the message to JSON and send it in the response body.
-        ctx.json(mapper.writeValueAsString(message));
-    } else {
-        // If no message is found, send an empty response body.
-        ctx.result("");
+        if (message != null) {
+            // Convert the message to JSON and send it in the response body.
+            ctx.json(mapper.writeValueAsString(message));
+        } else {
+            // If no message is found, send an empty response body.
+            ctx.result("");
+        }
     }
+
+    /*
+     * Handler to delete message by message id.
+     */
+    private void deleteMessageHandler(Context ctx) {
+        // Extract the message_id from the route parameters
+        int messageId = ctx.pathParamAsClass("message_id", Integer.class).get();
+    
+        // Attempt to delete the message by its ID
+        Message deletedMessage = messageService.deleteMessageById(messageId);
+    
+        if (deletedMessage != null) {
+            // Message was deleted, return it in the response
+            ctx.json(deletedMessage);
+        } else {
+            // Message did not exist, return an empty response
+            ctx.status(200);
+        }
     }
+    
 }

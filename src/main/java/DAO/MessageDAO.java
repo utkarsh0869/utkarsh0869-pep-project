@@ -120,4 +120,35 @@ public class MessageDAO {
         }
     }
 
+    public Message deleteMessage(int messageId) {
+        
+        Connection conn = ConnectionUtil.getConnection();
+    
+        try {
+            // Check if the message with the given message_id exists
+            Message existingMessage = getMessageById(messageId);
+    
+            if (existingMessage != null) {
+                // If the message exists, delete it from the database
+                String deleteSql = "DELETE FROM message WHERE message_id = ?";
+                PreparedStatement deleteStatement = conn.prepareStatement(deleteSql);
+                deleteStatement.setInt(1, messageId);
+    
+                int affectedRows = deleteStatement.executeUpdate();
+    
+                if (affectedRows > 0) {
+                    // Deletion successful, return the deleted message
+                    return existingMessage;
+                }
+            }
+    
+            // Message does not exist or deletion failed
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error deleting message: " + e.getMessage());
+        }
+    }
+    
+
 }

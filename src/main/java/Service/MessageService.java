@@ -44,4 +44,11 @@ public class MessageService {
         return messageDAO.getMessageById(messageId);
     }
 
+    public Message deleteMessageById(int messageId) {
+        // Attempt to delete the message from the database
+        Message deletedMessage = messageDAO.deleteMessage(messageId);
+
+        return deletedMessage;
+    }
+
 }

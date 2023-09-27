@@ -127,7 +127,6 @@ public class AccountDAO {
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()) {
-                // Found a matching account; create an Account object and populate it with data from the ResultSet.
                 int accountId = rs.getInt("account_id");
                 String password = rs.getString("password");
 

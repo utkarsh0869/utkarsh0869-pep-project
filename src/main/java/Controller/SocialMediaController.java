@@ -12,20 +12,11 @@ import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-/**
- * You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
- * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
- */
 public class SocialMediaController {
 
     MessageService messageService = new MessageService();
     AccountService accountService = new AccountService();
-    /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
-     * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
-     */
+
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("/", ctx -> ctx.result("Hello Javalin") );
@@ -136,10 +127,8 @@ public class SocialMediaController {
         Message deletedMessage = messageService.deleteMessageById(messageId);
     
         if (deletedMessage != null) {
-            // Message was deleted, return it in the response
             ctx.json(deletedMessage);
         } else {
-            // Message did not exist, return an empty response
             ctx.status(200);
         }
     }
@@ -162,14 +151,11 @@ public class SocialMediaController {
                 existingMessage.setMessage_text(updatedMessage.getMessage_text());
                 messageService.updateMessage(existingMessage);
 
-                // Return the updated message in the response body
                 ctx.json(mapper.writeValueAsString(existingMessage));
             } else {
-                // Invalid message_text, return 400 status
                 ctx.status(400);
             }
         } else {
-            // Message with the given message_id does not exist, return 400 status
             ctx.status(400);
         }
     }
@@ -182,17 +168,13 @@ public class SocialMediaController {
      * Handler to retrieve messages from a particular user id.
      */
     private void getMessagesByAccountHandler(Context ctx) throws JsonProcessingException {
-        // Extract the account_id from the path parameter
         int accountId = ctx.pathParamAsClass("account_id", Integer.class).get();
     
-        // Retrieve the list of messages posted by the specified user
         List<Message> messages = messageService.getMessagesByAccountId(accountId);
     
-        // Serialize the list of messages to JSON
         ObjectMapper mapper = new ObjectMapper();
         String responseJson = mapper.writeValueAsString(messages);
     
-        // Set the response status and body
         ctx.status(200).json(responseJson);
     }
 }

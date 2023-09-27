@@ -161,7 +161,7 @@ public class MessageDAO {
             ps.setString(1, existingMessage.getMessage_text());
             ps.setInt(2, existingMessage.getMessage_id());
 
-            int rowsUpdated = ps.executeUpdate();
+            ps.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -170,7 +170,7 @@ public class MessageDAO {
     }
     
     public List<Message> getMessagesByAccountId(int accountId) {
-        
+
         Connection conn = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
 
@@ -186,10 +186,6 @@ public class MessageDAO {
                 String messageText = rs.getString("message_text");
                 long timePostedEpoch = rs.getLong("time_posted_epoch");
 
-                // You may need to retrieve posted_by as well, depending on your database schema
-                // int postedBy = rs.getInt("posted_by");
-
-                // Create a Message object
                 Message message = new Message(messageId, accountId, messageText, timePostedEpoch);
                 messages.add(message);
             }

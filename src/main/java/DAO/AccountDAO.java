@@ -115,4 +115,29 @@ public class AccountDAO {
         }
     }
 
+    public Account getAccountByUsername(String username) {
+
+        Connection conn = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT * FROM account WHERE username = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                // Found a matching account; create an Account object and populate it with data from the ResultSet.
+                int accountId = rs.getInt("account_id");
+                String password = rs.getString("password");
+
+                return new Account(accountId, username, password);
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieveing account by username");
+        }
+        return null; // No matching account found.
+    }
+
 }

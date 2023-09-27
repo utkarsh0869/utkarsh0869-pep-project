@@ -1,9 +1,5 @@
-import java.util.Scanner;
 
 import Controller.SocialMediaController;
-import DAO.AccountDAO;
-import Model.Account;
-import Service.AccountService;
 import io.javalin.Javalin;
 
 /**
@@ -12,22 +8,11 @@ import io.javalin.Javalin;
  */
 public class Main {
 
-    private static SocialMediaController controller = new SocialMediaController();
-    private static AccountDAO accountDAO = new AccountDAO();
-
     public static void main(String[] args) {
 
-        // SocialMediaController controller = new SocialMediaController();
+        SocialMediaController controller = new SocialMediaController();
         Javalin app = controller.startAPI();
         app.start(8080);
 
-    }
-
-    public static SocialMediaController getController() {
-        return controller;
-    }
-
-    public static AccountDAO geAccountDAO() {
-        return accountDAO;
     }
 }

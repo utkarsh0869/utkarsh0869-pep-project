@@ -4,7 +4,6 @@ import java.util.List;
 
 import DAO.AccountDAO;
 import Model.Account;
-import io.javalin.http.Context;
 
 public class AccountService {
     
@@ -17,17 +16,6 @@ public class AccountService {
     public AccountService(AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
-
-    public void getAllAccounts(Context context) {
-        System.out.println("here");
-        List<Account> accounts = accountDAO.getAccounts();
-        context.json(accounts);
-        context.status(200);
-    }
-
-    // public List<Account> getAllAccounts() {
-    //     return accountDAO.getAccounts();
-    // }
 
     public Account registerAccount(Account account) {
         if(!account.getUsername().isBlank() && !account.getUsername().trim().isEmpty()) {
@@ -47,5 +35,18 @@ public class AccountService {
             }
         }
         return null; // Registeration failed.
+    }
+
+    public Account loginAccount(Account loginAccount) {
+
+        Account existingAccount = accountDAO.getAccountByUsername(loginAccount.getUsername());
+
+        if(existingAccount != null) {
+            if(loginAccount.getPassword().equals(existingAccount.getPassword())) {
+                return existingAccount;
+            }
+        }
+        // If no matching account is found or the passwords do not match, return null to indicate login failure.
+        return null;
     }
 }

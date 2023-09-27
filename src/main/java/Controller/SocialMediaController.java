@@ -11,7 +11,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
+ * You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
@@ -27,8 +27,8 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("/", ctx -> ctx.result("Hello Javalin") );
-        // app.post("register", ctx -> accountService.getAllAccounts(ctx));
         app.post("register", this::postRegisterHandler);
+        app.post("login", this::postLoginHandler);
         app.post("/messages", this::postMessagesHandler);
 
         return app;
@@ -48,6 +48,24 @@ public class SocialMediaController {
             ctx.status(200);
         } else {
             ctx.status(400);
+        }
+    }
+
+    /*
+     * Handler for user login.
+     */
+    private void postLoginHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account loginAccount = mapper.readValue(ctx.body(), Account.class);
+        Account authenticatedAccount = accountService.loginAccount(loginAccount);
+
+        if (authenticatedAccount != null) {
+            // Login successful
+            ctx.json(mapper.writeValueAsString(authenticatedAccount));
+            ctx.status(200);
+        } else {
+            // Login failed
+            ctx.status(401); // Unauthorized
         }
     }
 
